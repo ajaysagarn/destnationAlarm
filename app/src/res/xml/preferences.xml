@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Alarm Settings"
+        android:key="Alarm_Settings">
+
+        <SwitchPreference
+            android:key="vibration_pref"
+            android:title="Vibration"
+            android:defaultValue="true"/>
+    <SwitchPreference
+        android:key="sound_pref"
+        android:title="Sound"
+        android:defaultValue="true"/>
+
+    <RingtonePreference
+        android:dependency="sound_pref"
+        android:key="ringtone_pref"
+        android:title="Select Ringtone"
+        android:ringtoneType="alarm"
+        android:defaultValue="content://settings/system/alarm_alert"
+        android:showDefault="true"
+       android:showSilent="false"/>
+
+        <CheckBoxPreference
+            android:dependency="sound_pref"
+            android:key="headphone_pref"
+            android:title="Headphones"
+            android:summary="@string/headphone_desc"
+            android:defaultValue="true"/>
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Map Settings"
+        android:key="Map_Settings">
+    <ListPreference
+        android:key="radius_pref"
+        android:title="Set Distance to Alarm"
+        android:dialogTitle="Distance"
+        android:entries="@array/pref_radius_entries"
+        android:entryValues="@array/pref_radius_values"
+        android:defaultValue="200" />
+     </PreferenceCategory>
+
+</PreferenceScreen>

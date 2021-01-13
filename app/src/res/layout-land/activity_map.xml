@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_relative"
+    android:orientation="horizontal">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        tools:context="com.example.currentplacedetailsonmap.MapsActivityCurrentPlace">
+
+
+
+    </fragment>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:elevation="20dp"
+        android:background="@drawable/white_border"
+        android:id="@+id/searchbar">
+
+        <ImageView
+            android:id="@+id/navbar"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:elevation="27dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/ic_navbar"/>
+
+        <ImageView
+            android:id="@+id/magimg"
+            android:layout_width="25dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:elevation="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/magimg"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/searchtext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="false"
+            android:hint="Search Location"
+            android:paddingLeft="26dp"
+            android:textColor="#000"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="100dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:elevation="50dp"
+        android:paddingBottom="40dp"
+        android:id="@+id/dest_img"
+        android:src="@drawable/marker"/>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignEnd="@+id/searchbar"
+        android:layout_marginTop="75sp"
+        android:elevation="50dp"
+        android:background="@drawable/round_back"
+        android:src="@drawable/gps_ic"
+        android:id="@+id/ic_gps"/>
+
+    <Button
+        android:id="@+id/set_dest"
+        style="@android:style/Widget.Material.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="23dp"
+        android:text="Set Destination" />
+
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/round_back"
+        android:src="@drawable/setimg"
+        android:id="@+id/setingimg"/>
+
+
+
+    <Button
+        android:id="@+id/cancel"
+        style="@android:style/Widget.Material.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="23dp"
+        android:visibility="invisible"
+        android:text="STOP" />
+
+    <ImageView
+        android:id="@+id/recents_img"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="144dp"
+        android:background="@drawable/round_back"
+        android:src="@drawable/ic_recents_img" />
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="200dp"
+        android:elevation="75dp">
+
+    </FrameLayout>
+
+
+</RelativeLayout>
+

@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">Destination Alarm</string>
+    <string name="maps_API_KEY">AIzaSyAI__ei_Pl8-7nBbh0QzU9rjZvOLTKdtmQ</string>
+    <string name="channel_name">Destination Alert</string>
+    <string name="channel_description">Destination Set</string>
+    <string name="noti_text">"Destination Alert"</string>
+    <string name="not_des">Alarm has been set</string>
+    <string name="dismiss">Dismiss</string>
+
+    <string name="title_activity_alarm">Alarm</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_navigation">Navigation</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Destination Alert</string>
+    <string name="nav_header_subtitle">App Options</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="privacy_policy">This Privacy Policy applies to Destination Alarm application. This application tracks the users current location and alerts the users when they are about to reach their destination.  \n1) The application does not retrieve and store any personal and private information from the device and does not share information with any third parties.  \n2)This application retrieves device location using gps and Network services and also uses an internet connection to load supporting resources.  \n3)This application contains Advertisements in various forms using Google Admob services.</string>
+
+
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Hello Food!</string>
+    <string name="slide_1_desc">Move the marker to the Desired location or search for a location from the search bar and click on Set Alarm
+</string>
+
+    <string name="slide_2_title">Movie Tickets</string>
+    <string name="slide_2_desc">Give a Name to the Alarm</string>
+
+    <string name="slide_3_title">Great Discounts</string>
+    <string name="slide_3_desc">You can set the Distance to alarm from the Settings</string>
+
+    <string name="slide_4_title">World Travel</string>
+    <string name="slide_4_desc">Do not close the app from the recents menu and keep GPS turned ON when an alarm is set.</string>
+
+    <string name="play_again_desc">To see the welcome slider again, click on help from the navigation drawer</string>
+    <string name="play_again">Play Again</string>
+    <string name="headphone_desc">Play alarm sound only on headphones when connected</string>
+
+    <string name="banner_ad1">ca-app-pub-7716271911015174/2489473681</string>
+    <string name="banner_ad2">ca-app-pub-7716271911015174/6750801259</string>
+    <string name="banner_ad3">ca-app-pub-7716271911015174/4727273145</string>
+    <string name="admob_appId">ca-app-pub-7716271911015174~3853175172</string>
+    <string name="Interstitial_ad1">ca-app-pub-7716271911015174/6563098993</string>
+    <string name="email">Contact : meteoriteapps@gmail.com</string>
+
+</resources>
+
+

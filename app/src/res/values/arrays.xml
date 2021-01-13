@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_radius_entries">
+        <item>20m</item>
+        <item>40m</item>
+        <item>60m</item>
+        <item>80m</item>
+        <item>100m</item>
+        <item>200m</item>
+        <item>400m</item>
+        <item>600m</item>
+        <item>800m</item>
+        <item>1km</item>
+        <item>2km</item>
+        <item>4km</item>
+        <item>6km</item>
+        <item>8km</item>
+        <item>10km</item>
+        <item>15km</item>
+        <item>20km</item>
+    </string-array>
+    <string-array name="pref_radius_values">
+        <item>20</item>
+        <item>40</item>
+        <item>60</item>
+        <item>80</item>
+        <item>100</item>
+        <item>200</item>
+        <item>400</item>
+        <item>600</item>
+        <item>800</item>
+        <item>1000</item>
+        <item>2000</item>
+        <item>4000</item>
+        <item>6000</item>
+        <item>8000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>20000</item>
+    </string-array>
+    <string-array name="pref_sound_entries">
+    <item>neon</item>
+    <item>holo</item>
+    <item>xenon</item>
+    </string-array>
+    <string-array name="pref_sound_values">
+        <item>neon</item>
+        <item>holo</item>
+        <item>xenon</item>
+    </string-array>
+</resources>

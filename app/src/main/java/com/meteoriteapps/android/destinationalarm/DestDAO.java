@@ -24,8 +24,4 @@ public interface DestDAO {
     public double GetLng(String dname);
 
 
-
-
-
-
 }

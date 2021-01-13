@@ -1,7 +1,6 @@
 package com.meteoriteapps.android.destinationalarm;
 
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -28,6 +27,35 @@ public class welcome_activity extends AppCompatActivity {
     private TextView[] dots;
     private int[] layouts;
     private Button btnSkip, btnNext;
+    //  viewpager change listener
+    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
+
+        @Override
+        public void onPageSelected(int position) {
+            addBottomDots(position);
+
+            // changing the next button text 'NEXT' / 'GOT IT'
+            if (position == layouts.length - 1) {
+                // last page. make button text to GOT IT
+                btnNext.setText(getString(R.string.start));
+                btnSkip.setVisibility(View.GONE);
+            } else {
+                // still pages are left
+                btnNext.setText(getString(R.string.next));
+                btnSkip.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void onPageScrolled(int arg0, float arg1, int arg2) {
+
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int arg0) {
+
+        }
+    };
     private PrefManager prefManager;
 
     @Override
@@ -37,13 +65,16 @@ public class welcome_activity extends AppCompatActivity {
         // Checking for first time launch - before calling setContentView()
         prefManager = new PrefManager(this);
 
-        switch(MapActivity.openhelp){
-            case 1 : if (!prefManager.isFirstTimeLaunch()) {
-                        launchHomeScreen();
-                        finish();
-                    }break;
+        switch (MapActivity.openhelp) {
+            case 1:
+                if (!prefManager.isFirstTimeLaunch()) {
+                    launchHomeScreen();
+                    finish();
+                }
+                break;
 
-            case 2: break;
+            case 2:
+                break;
 
         }
 
@@ -54,7 +85,7 @@ public class welcome_activity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_welcome_activity);
-        MapActivity.openhelp=1;
+        MapActivity.openhelp = 1;
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
         btnSkip = (Button) findViewById(R.id.btn_skip);
@@ -132,36 +163,6 @@ public class welcome_activity extends AppCompatActivity {
         startActivity(hintent);
         finish();
     }
-
-    //  viewpager change listener
-    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
-
-        @Override
-        public void onPageSelected(int position) {
-            addBottomDots(position);
-
-            // changing the next button text 'NEXT' / 'GOT IT'
-            if (position == layouts.length - 1) {
-                // last page. make button text to GOT IT
-                btnNext.setText(getString(R.string.start));
-                btnSkip.setVisibility(View.GONE);
-            } else {
-                // still pages are left
-                btnNext.setText(getString(R.string.next));
-                btnSkip.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int arg0) {
-
-        }
-    };
 
     /**
      * Making notification bar transparent

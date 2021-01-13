@@ -1,58 +1,61 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="280dp"
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_back"
-    android:paddingBottom="12dp"
-    android:padding="12dp">
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:paddingBottom="12dp">
 
 
     <TextView
         android:id="@+id/dest_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Destination Alert"
         android:inputType="textEmailAddress"
-        android:textStyle="bold"
-        android:textSize="20sp" />
+        android:text="Destination Alert"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Version : 1.0"/>
+        android:text="Version : 1.0" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="DEVELOPER : Ajay Sagar N"/>
+        android:text="DEVELOPER : Ajay Sagar N" />
+
     <TextView
-        android:layout_width ="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/email"
         android:paddingBottom="6dp"
-       />
+        android:text="@string/email" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Privacy Policy :"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/privacyp"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:inputType="textMultiLine"
-        android:scrollHorizontally="false"
-        android:text="@string/privacy_policy"
+        android:paddingBottom="6dp"
         android:scrollbars="vertical"
-        android:paddingBottom="6dp"/>
+        android:scrollHorizontally="false"
+        android:text="@string/privacy_policy" />
 
     <Button
         android:id="@+id/about_close"
         android:layout_width="65dp"
         android:layout_height="27dp"
+        android:layout_marginLeft="180dp"
         android:background="@drawable/dialog_btn_back"
         android:text="close"
-        android:layout_marginLeft="180dp"
-        android:textColor="#fff"/>
+        android:textColor="#fff" />
 
 
 </LinearLayout>

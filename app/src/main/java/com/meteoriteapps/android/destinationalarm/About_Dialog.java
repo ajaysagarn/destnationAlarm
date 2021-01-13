@@ -11,12 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class About_Dialog extends DialogFragment{
+public class About_Dialog extends DialogFragment {
 
-    private static final String TAG="about_Dialog";
+    private static final String TAG = "about_Dialog";
     private Button close;
     private TextView pp;
-
 
 
     @Nullable
@@ -26,7 +25,7 @@ public class About_Dialog extends DialogFragment{
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        final View view = inflater.inflate(R.layout.dialog_about,null);
+        final View view = inflater.inflate(R.layout.dialog_about, null);
         close = view.findViewById(R.id.about_close);
         pp = view.findViewById(R.id.privacyp);
         pp.setMovementMethod(new ScrollingMovementMethod());
@@ -43,8 +42,6 @@ public class About_Dialog extends DialogFragment{
 
 
         return builder.create();
-
-
 
 
     }

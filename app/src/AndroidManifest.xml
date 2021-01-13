@@ -26,7 +26,8 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -39,7 +40,7 @@
             android:name=".MapActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".LocationTracker"
@@ -54,7 +55,8 @@
 
         <receiver android:name=".NotificationReceiver" />
 
-        <activity android:name=".welcome_activity"
+        <activity
+            android:name=".welcome_activity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
     </application>

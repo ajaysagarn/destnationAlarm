@@ -5,7 +5,6 @@
     android:background="@color/bg_screen">
 
 
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,7 +16,6 @@
             android:layout_width="305dp"
             android:layout_height="181dp"
             android:src="@drawable/intro_img2" />
-
 
 
         <TextView

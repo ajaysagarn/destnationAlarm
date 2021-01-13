@@ -12,23 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-public class Destination_Dialog extends DialogFragment{
+public class Destination_Dialog extends DialogFragment {
 
-    private static final String TAG="Destination_Dialog";
+    private static final String TAG = "Destination_Dialog";
     private EditText destname;
     private DialogListener mdialoglistener;
-
-    public interface DialogListener{
-        public void OnOkClicked();
-
-    }
-
-   /* @Override
-    public void onStop() {
-        super.onStop();
-        if(MapActivity.cancel_press!=true){ MapActivity.cancel_press=true; }
-    }*/
-
 
     @Override
     public void onAttach(Context context) {
@@ -42,6 +30,12 @@ public class Destination_Dialog extends DialogFragment{
 
     }
 
+   /* @Override
+    public void onStop() {
+        super.onStop();
+        if(MapActivity.cancel_press!=true){ MapActivity.cancel_press=true; }
+    }*/
+
     @Nullable
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -49,8 +43,8 @@ public class Destination_Dialog extends DialogFragment{
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        final View view = inflater.inflate(R.layout.dialog_destination,null);
-        destname= view.findViewById(R.id.dest_name);
+        final View view = inflater.inflate(R.layout.dialog_destination, null);
+        destname = view.findViewById(R.id.dest_name);
 
 
         builder.setTitle("Enter Alarm name");
@@ -58,16 +52,16 @@ public class Destination_Dialog extends DialogFragment{
         builder.setView(view);
 
 
-       builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-           @Override
-           public void onClick(DialogInterface dialogInterface, int i) {
-               Log.d(TAG, "onClick: Cancel pressed");
-               if(MapActivity.recents.getDname().isEmpty())
-                   MapActivity.recents.setDname("");
-               MapActivity.cancel_press=true;
-               getDialog().dismiss();
-           }
-       });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.d(TAG, "onClick: Cancel pressed");
+                if (MapActivity.recents.getDname().isEmpty())
+                    MapActivity.recents.setDname("");
+                MapActivity.cancel_press = true;
+                getDialog().dismiss();
+            }
+        });
 
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
@@ -75,18 +69,17 @@ public class Destination_Dialog extends DialogFragment{
                 Log.d(TAG, "onClick: Getting dest");
                 String dest = destname.getText().toString();
                 if (!dest.isEmpty()) {
-                    RecentsListFragment.mflag=false;
+                    RecentsListFragment.mflag = false;
                     MapActivity.recents.setDname(dest);
                     MapActivity.selectedDestination = dest;
-                    Log.d(TAG, "onClick: Destination Entered"+dest);
+                    Log.d(TAG, "onClick: Destination Entered" + dest);
                     MapActivity.alarmActive = true;
-                    if(MapActivity.recentsOpenFlag){
+                    if (MapActivity.recentsOpenFlag) {
                         MapActivity.Ma.removerecentsFragment();
                     }
                     mdialoglistener.OnOkClicked();
-                }
-                else
-                    MapActivity.cancel_press=true;
+                } else
+                    MapActivity.cancel_press = true;
                 getDialog().dismiss();
             }
         });
@@ -95,7 +88,10 @@ public class Destination_Dialog extends DialogFragment{
         return builder.create();
 
 
+    }
 
+    public interface DialogListener {
+        public void OnOkClicked();
 
     }
 

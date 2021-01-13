@@ -9,17 +9,17 @@ import android.support.annotation.NonNull;
 public class Destinations {
 
 
-    @NonNull @PrimaryKey
+    @NonNull
+    @PrimaryKey
     private String Dname;
-    @ColumnInfo(name="dlat")
+    @ColumnInfo(name = "dlat")
     private double dlat;
-    @ColumnInfo(name="dlong")
+    @ColumnInfo(name = "dlong")
     private double dlong;
 
 
-
-    Destinations(){
-        Dname="";
+    Destinations() {
+        Dname = "";
 
     }
 
@@ -28,20 +28,20 @@ public class Destinations {
         return Dname;
     }
 
-    public double getDlat() {
-        return dlat;
-    }
-
-    public double getDlong() {
-        return dlong;
-    }
-
     public void setDname(@NonNull String dname) {
         Dname = dname;
     }
 
+    public double getDlat() {
+        return dlat;
+    }
+
     public void setDlat(double dlat) {
         this.dlat = dlat;
+    }
+
+    public double getDlong() {
+        return dlong;
     }
 
     public void setDlong(double dlong) {

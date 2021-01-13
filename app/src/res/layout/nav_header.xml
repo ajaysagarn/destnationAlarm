@@ -9,13 +9,12 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
 
-
     <com.google.android.gms.ads.AdView
         android:id="@+id/header_banner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        ads:adSize="BANNER"
         android:elevation="20dp"
+        ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad3" />
 
 

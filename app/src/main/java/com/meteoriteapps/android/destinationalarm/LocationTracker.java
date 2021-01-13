@@ -20,65 +20,23 @@ import com.google.android.gms.maps.model.LatLng;
 public class LocationTracker extends Service {
 
     private static final String TAG = "LocationTrackService";
-    private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 5000;
     private static final float LOCATION_DISTANCE = 10;
-    private SharedPreferences shapref;
-    public static boolean trackeractive=true;
-
+    public static boolean trackeractive = true;
     protected LatLng Destination;
     protected LatLng Current;
-
-    private class LocationListener implements android.location.LocationListener{
-        Location mLastLocation;
-        public LocationListener(String provider)
-        {
-            Log.e(TAG, "LocationListener " + provider);
-            mLastLocation = new Location(provider);
-        }
-        @Override
-        public void onLocationChanged(Location location)
-        {
-
-            mLastLocation.set(location);
-            Current= new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
-
-            if(DistanceBetween(Current,Destination)<=MapActivity.radius){
-                trackeractive=false;
-
-                startAlarm();
-                stopSelf();
-            }
-
-        }
-        @Override
-        public void onProviderDisabled(String provider)
-        {
-            Log.e(TAG, "onProviderDisabled: " + provider);
-        }
-        @Override
-        public void onProviderEnabled(String provider)
-        {
-            Log.e(TAG, "onProviderEnabled: " + provider);
-        }
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras)
-        {
-            Log.e(TAG, "onStatusChanged: " + provider);
-        }
-    }
-    LocationListener[] mLocationListeners = new LocationListener[] {
+    LocationListener[] mLocationListeners = new LocationListener[]{
             new LocationListener(LocationManager.GPS_PROVIDER),
             new LocationListener(LocationManager.NETWORK_PROVIDER)
     };
-
-
+    private LocationManager mLocationManager = null;
+    private SharedPreferences shapref;
 
     @Override
     public void onCreate() {
         Log.e(TAG, "onCreate");
         setNotification();
-        shapref= PreferenceManager.getDefaultSharedPreferences(this);
+        shapref = PreferenceManager.getDefaultSharedPreferences(this);
         //radius= Double.parseDouble(shapref.getString("radius_pref",""));
         initializeLocationManager();
         try {
@@ -101,14 +59,12 @@ public class LocationTracker extends Service {
         }
     }
 
-
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
 
-        Bundle extras= intent.getExtras();
-        Destination= new LatLng(extras.getDouble("Latitude"),extras.getDouble("Longitude"));
+        Bundle extras = intent.getExtras();
+        Destination = new LatLng(extras.getDouble("Latitude"), extras.getDouble("Longitude"));
 
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
@@ -142,9 +98,9 @@ public class LocationTracker extends Service {
         }
     }
 
-    protected double DistanceBetween(LatLng src,LatLng dest){
-        Location current= new Location("");
-        Location Destination= new Location("");
+    protected double DistanceBetween(LatLng src, LatLng dest) {
+        Location current = new Location("");
+        Location Destination = new Location("");
 
         Destination.setLatitude(dest.latitude);
         Destination.setLongitude(dest.longitude);
@@ -154,9 +110,19 @@ public class LocationTracker extends Service {
 
 
         double Distance = current.distanceTo(Destination);
-        Log.d(TAG, "DistanceBetween: distance = "+Distance );
+        Log.d(TAG, "DistanceBetween: distance = " + Distance);
         // Toast.makeText(MapActivity.this, "Distance= "+Distance, Toast.LENGTH_SHORT).show();
         return Distance;
+    }
+
+    private void startAlarm() {
+        Intent alarmIntent = new Intent("android.intent.action.MAIN");
+        alarmIntent.setClass(this, Alarm.class);
+        alarmIntent.putExtra("distance", MapActivity.radius);
+        alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(alarmIntent);
+
     }
 
    /* private void sendBroadcasts(){
@@ -167,30 +133,19 @@ public class LocationTracker extends Service {
         Log.d(TAG, "sendBroadcasts: Broadcast sent!");
     }*/
 
-   private void startAlarm(){
-       Intent alarmIntent = new Intent("android.intent.action.MAIN");
-       alarmIntent.setClass(this, Alarm.class);
-       alarmIntent.putExtra("distance",MapActivity.radius);
-       alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-       startActivity(alarmIntent);
-
-   }
-
-    private void setNotification(){
-        Intent Nintent = new Intent(this,MapActivity.class);
+    private void setNotification() {
+        Intent Nintent = new Intent(this, MapActivity.class);
         Nintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pnintent= PendingIntent.getActivity(this, 0, Nintent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pnintent = PendingIntent.getActivity(this, 0, Nintent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 
         Intent dismissIntent = new Intent(this, NotificationReceiver.class);
         dismissIntent.setAction("Dismiss_Alert");
         PendingIntent dismissPendingIntent =
-                PendingIntent.getBroadcast(this,0,dismissIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
-
-        NotificationCompat.Builder mBuilder= new NotificationCompat.Builder(this,"004")
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "004")
                 .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle(getString(R.string.noti_text))
                 .setContentText(getString(R.string.not_des))
@@ -208,7 +163,44 @@ public class LocationTracker extends Service {
 
     }
 
+    private class LocationListener implements android.location.LocationListener {
+        Location mLastLocation;
 
+        public LocationListener(String provider) {
+            Log.e(TAG, "LocationListener " + provider);
+            mLastLocation = new Location(provider);
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+
+            mLastLocation.set(location);
+            Current = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+
+            if (DistanceBetween(Current, Destination) <= MapActivity.radius) {
+                trackeractive = false;
+
+                startAlarm();
+                stopSelf();
+            }
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.e(TAG, "onProviderDisabled: " + provider);
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.e(TAG, "onProviderEnabled: " + provider);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.e(TAG, "onStatusChanged: " + provider);
+        }
+    }
 
 
 }

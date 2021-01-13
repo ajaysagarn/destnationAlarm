@@ -77,7 +77,6 @@ import java.util.List;
 import java.util.Random;
 
 
-
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, RecentsListFragment.ClickListener, Destination_Dialog.DialogListener {
 
 
@@ -90,16 +89,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final float DEFAULT_ZOOM = 15f;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             new LatLng(-40, -168), new LatLng(71, 136));
-
+    public static boolean recentsOpenFlag = false;
+    public static double radius;
+    public static Database destdb;
+    public static Destinations recents;
+    public static boolean cancel_press = false;
+    public static ArrayList<String> destnames;
+    public static MapActivity Ma;
+    public static String selectedDestination;
+    public static boolean alarmActive = false;
+    public static int openhelp = 1;
+    public static RecentsListFragment listFragment;
     private GeoDataClient mGeoDataClient;
     private PlaceDetectionClient mPlaceDetectionClient;
-
-
     //widgets
     private AutoCompleteTextView mSearchText;
     private ImageView mGps;
     private ImageView magimg;
-
     private Button set_dest;
     private ImageView setingimg;
     private ImageView recents_img;
@@ -112,40 +118,50 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Circle circle;
     private Intent intent;
     private DrawerLayout mDrawerLayout;
-
-    private boolean flag=false;
-    public  static boolean recentsOpenFlag = false;
-
+    //tables
+    private boolean flag = false;
     //vars
     private Boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private PlaceAutocompleteAdapter AutoComplete;
-
     private Place mPlace;
     private SharedPreferences shapref;
     private LatLng Dest_Loc;
-    public static double radius;
     private NavigationView navigationView;
-    //tables
-
-    public static Database destdb;
-    public static Destinations recents ;
-    public static boolean cancel_press = false;
-    public static ArrayList<String> destnames;
-    public static MapActivity Ma;
-    public static String selectedDestination;
-    public static boolean alarmActive = false;
-    public static int openhelp = 1;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
-
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private FragmentTransaction fragmentTransaction;
-    public static RecentsListFragment listFragment;
     private Destination_Dialog dialog;
     private InterstitialAd mInterstitialAd;
     private int random;
+    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            hideSoftKeyboard();
 
+            final AutocompletePrediction item = AutoComplete.getItem(i);
+            final String placeId = item.getPlaceId();
+
+            mGeoDataClient.getPlaceById(placeId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
+                @Override
+                public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
+                    if (task.isSuccessful()) {
+                        PlaceBufferResponse places = task.getResult();
+                        mPlace = places.get(0);
+                        LatLng LatLngObj = mPlace.getLatLng();
+                        Log.i(TAG, "Place found: " + mPlace.getName());
+                        moveCamera(LatLngObj, DEFAULT_ZOOM, (String) mPlace.getName());
+                        places.release();
+                    } else {
+                        Log.e(TAG, "Place not found.");
+                    }
+                }
+            });
+
+
+        }
+    };
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -155,13 +171,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         createNotificationChannel();
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-        Ma= this;
+        Ma = this;
 
         Random r = new Random();
         random = r.nextInt(10);
-        FragmentManager fragmentManager= getSupportFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        listFragment= new RecentsListFragment();
+        listFragment = new RecentsListFragment();
         navbar = (ImageView) findViewById(R.id.navbar);
         shapref = PreferenceManager.getDefaultSharedPreferences(this);
         mSearchText = (AutoCompleteTextView) findViewById(R.id.searchtext);
@@ -171,19 +187,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         dest_img = (ImageView) findViewById(R.id.dest_img);
         setingimg = (ImageView) findViewById(R.id.setingimg);
         cancel = (Button) findViewById(R.id.cancel);
-        recents_img=(ImageView)findViewById(R.id.recents_img);
+        recents_img = (ImageView) findViewById(R.id.recents_img);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
 
 
-        destdb = Room.databaseBuilder(getApplicationContext(),Database.class,"destdb").build();
+        destdb = Room.databaseBuilder(getApplicationContext(), Database.class, "destdb").build();
 
 
         listener =
                 new SharedPreferences.OnSharedPreferenceChangeListener() {
                     public void onSharedPreferenceChanged(SharedPreferences shapref, String key) {
 
-                        if((key.equals(RADIUS_PREF)) && MapActivity.alarmActive ){
+                        if ((key.equals(RADIUS_PREF)) && MapActivity.alarmActive) {
 
                             MapActivity.Ma.changeRadius();
 
@@ -212,23 +228,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         getLocationPermission();
 
 
-
     }
-
-
 
     @Override
     protected void onDestroy() {
         removeNotification();
-        if(alarmActive){
-            Toast.makeText(MapActivity.this,"Alarm Dismissed",Toast.LENGTH_LONG).show();
+        if (alarmActive) {
+            Toast.makeText(MapActivity.this, "Alarm Dismissed", Toast.LENGTH_LONG).show();
             OnResumeClicked(true);
         }
         super.onDestroy();
 
     }
-
-
 
     private void getLocationPermission() {
         Log.d(TAG, "getLocationPermission: getting location permissions");
@@ -260,8 +271,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(MapActivity.this);
     }
 
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -280,7 +289,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             init();
         }
     }
-
 
     private void getDeviceLocation() {
 
@@ -311,13 +319,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-
-
     private void init() {
         mMap.setBuildingsEnabled(false);
 
-        mGeoDataClient = Places.getGeoDataClient(this,null);
-        mPlaceDetectionClient = Places.getPlaceDetectionClient(this,  null);
+        mGeoDataClient = Places.getGeoDataClient(this, null);
+        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
 
         mSearchText.setOnItemClickListener(mAutocompleteClickListener);
 
@@ -334,23 +340,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
         mSearchText.setOnEditorActionListener(new AutoCompleteTextView.OnEditorActionListener() {
-                                                  @Override
-                                                  public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                                                      if (i == EditorInfo.IME_ACTION_SEARCH
-                                                              || i == EditorInfo.IME_ACTION_DONE
-                                                              || i == EditorInfo.IME_ACTION_GO
-                                                              || i == EditorInfo.IME_ACTION_NEXT
-                                                              || keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                                                              || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
-                                                          geoLocate();
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_SEARCH
+                        || i == EditorInfo.IME_ACTION_DONE
+                        || i == EditorInfo.IME_ACTION_GO
+                        || i == EditorInfo.IME_ACTION_NEXT
+                        || keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                        || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
+                    geoLocate();
 
-                                                      }
+                }
 
 
-
-                                                      return false;
-                                                  }
-                                              });
+                return false;
+            }
+        });
 
         magimg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -369,7 +374,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setingimg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent sintent= new Intent(MapActivity.this,Settings.class);
+                Intent sintent = new Intent(MapActivity.this, Settings.class);
                 startActivity(sintent);
 
             }
@@ -380,17 +385,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onClick(View view) {
 
                 recents = new Destinations();
-                Dest_Loc= mMap.getCameraPosition().target;
+                Dest_Loc = mMap.getCameraPosition().target;
                 recents.setDlat(Dest_Loc.latitude);
                 recents.setDlong(Dest_Loc.longitude);
 
                 dialog = new Destination_Dialog();
-                dialog.show(fragmentManager,"TAG");
-                                     
-              
+                dialog.show(fragmentManager, "TAG");
+
 
             }
-
 
 
         });
@@ -398,7 +401,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               OnResumeClicked(true);
+                OnResumeClicked(true);
 
 
             }
@@ -414,16 +417,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         recents_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!recentsOpenFlag) {
+                if (!recentsOpenFlag) {
                     recentsOpenFlag = true;
                     fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.add(R.id.fragment_container, listFragment);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
 
-                }
-                else if(recentsOpenFlag)
-                {
+                } else if (recentsOpenFlag) {
                     removerecentsFragment();
                 }
 
@@ -435,30 +436,34 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-                switch(menuItem.getItemId()){
-                    case R.id.Settings :mDrawerLayout.closeDrawers();
-                                         Intent sintent= new Intent(MapActivity.this,Settings.class);
-                                         startActivity(sintent);
-                                         break;
-                    case R.id.Recents :mDrawerLayout.closeDrawers();
-                                        if(!recentsOpenFlag) {
-                                            recentsOpenFlag = true;
-                                            fragmentTransaction = fragmentManager.beginTransaction();
-                                            fragmentTransaction.add(R.id.fragment_container, listFragment);
-                                            fragmentTransaction.addToBackStack(null);
-                                            fragmentTransaction.commit();
-                                        }
-                                        else{}
-                                        break;
-                    case R.id.About : mDrawerLayout.closeDrawers();
-                                      About_Dialog aboutDialog= new About_Dialog();
-                                      aboutDialog.show(fragmentManager,"about");
-                                      break;
-                    case R.id.help : mDrawerLayout.closeDrawers();
-                                     openhelp = 2;
-                                     Intent help_intent = new Intent(MapActivity.this,welcome_activity.class);
-                                     startActivity(help_intent);
-                                     break;
+                switch (menuItem.getItemId()) {
+                    case R.id.Settings:
+                        mDrawerLayout.closeDrawers();
+                        Intent sintent = new Intent(MapActivity.this, Settings.class);
+                        startActivity(sintent);
+                        break;
+                    case R.id.Recents:
+                        mDrawerLayout.closeDrawers();
+                        if (!recentsOpenFlag) {
+                            recentsOpenFlag = true;
+                            fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.add(R.id.fragment_container, listFragment);
+                            fragmentTransaction.addToBackStack(null);
+                            fragmentTransaction.commit();
+                        } else {
+                        }
+                        break;
+                    case R.id.About:
+                        mDrawerLayout.closeDrawers();
+                        About_Dialog aboutDialog = new About_Dialog();
+                        aboutDialog.show(fragmentManager, "about");
+                        break;
+                    case R.id.help:
+                        mDrawerLayout.closeDrawers();
+                        openhelp = 2;
+                        Intent help_intent = new Intent(MapActivity.this, welcome_activity.class);
+                        startActivity(help_intent);
+                        break;
                 }
 
                 return true;
@@ -512,59 +517,57 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-
     @Override
-    public void OnplayClicked(LatLng position){
+    public void OnplayClicked(LatLng position) {
 
-            if(random>10){
-                random -=10;
+        if (random > 10) {
+            random -= 10;
 
-            }
-            if(random==3 || random == 6 || random ==9){
-                if (mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                    random++;
-                } else {
-                    Log.d(TAG, "The interstitial wasn't loaded yet.");
-
-                }
-
-            }
-            else{
+        }
+        if (random == 3 || random == 6 || random == 9) {
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
                 random++;
+            } else {
+                Log.d(TAG, "The interstitial wasn't loaded yet.");
 
             }
 
-           Log.d(TAG, "onPostExecute: Setting Marker");
-           radius = Double.parseDouble(shapref.getString("radius_pref", ""));
+        } else {
+            random++;
 
-           if(position.latitude == 0.0 || position.longitude == 0.0 )
+        }
+
+        Log.d(TAG, "onPostExecute: Setting Marker");
+        radius = Double.parseDouble(shapref.getString("radius_pref", ""));
+
+        if (position.latitude == 0.0 || position.longitude == 0.0)
             destMarker = new MarkerOptions().position(Dest_Loc).title("");
-           else {
-                destMarker = new MarkerOptions().position(position).title("");
-                moveCamera(position,DEFAULT_ZOOM,"");
-           }
-            set_dest_marker = mMap.addMarker(destMarker);
-            Dest_Loc = set_dest_marker.getPosition();
-            dest_img.setVisibility(View.INVISIBLE);
-            set_dest.setVisibility(View.INVISIBLE);
-            cancel.setVisibility(View.VISIBLE);
+        else {
+            destMarker = new MarkerOptions().position(position).title("");
+            moveCamera(position, DEFAULT_ZOOM, "");
+        }
+        set_dest_marker = mMap.addMarker(destMarker);
+        Dest_Loc = set_dest_marker.getPosition();
+        dest_img.setVisibility(View.INVISIBLE);
+        set_dest.setVisibility(View.INVISIBLE);
+        cancel.setVisibility(View.VISIBLE);
 
-            circleOptions = new CircleOptions()
-                    .center(Dest_Loc)
-                    .radius(radius)
-                    .strokeWidth((float) 0.5)
-                    .fillColor(Color.argb(50, 102, 255, 153))
-                    .strokeColor(Color.argb(100, 0, 230, 77));
-            circle = mMap.addCircle(circleOptions);
-            flag = true;
-          //  setNotification();
-            intent = new Intent(MapActivity.this, LocationTracker.class);
+        circleOptions = new CircleOptions()
+                .center(Dest_Loc)
+                .radius(radius)
+                .strokeWidth((float) 0.5)
+                .fillColor(Color.argb(50, 102, 255, 153))
+                .strokeColor(Color.argb(100, 0, 230, 77));
+        circle = mMap.addCircle(circleOptions);
+        flag = true;
+        //  setNotification();
+        intent = new Intent(MapActivity.this, LocationTracker.class);
 
-            intent.putExtra("Latitude", Dest_Loc.latitude);
-            intent.putExtra("Longitude", Dest_Loc.longitude);
+        intent.putExtra("Latitude", Dest_Loc.latitude);
+        intent.putExtra("Longitude", Dest_Loc.longitude);
 
-            startService(intent);
+        startService(intent);
 
     }
 
@@ -576,12 +579,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         cancel.setVisibility(View.INVISIBLE);
         set_dest.setVisibility(View.VISIBLE);
         removeNotification();
-        LocationTracker.trackeractive=false;
-        if(stop)
-        stopService(intent);
+        LocationTracker.trackeractive = false;
+        if (stop)
+            stopService(intent);
         alarmActive = false;
-        RecentsListFragment.mflag=true;
-        selectedDestination="";
+        RecentsListFragment.mflag = true;
+        selectedDestination = "";
 
     }
 
@@ -596,10 +599,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.animateCamera(update);
 
-       hideSoftKeyboard();
+        hideSoftKeyboard();
     }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -625,46 +626,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private void hideSoftKeyboard() {
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-    }
-
 
      /*
         --------------------------- google places API autocomplete suggestions -----------------
      */
 
-    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            hideSoftKeyboard();
+    private void hideSoftKeyboard() {
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
 
-            final AutocompletePrediction item = AutoComplete.getItem(i);
-            final String placeId = item.getPlaceId();
-
-            mGeoDataClient.getPlaceById(placeId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
-                @Override
-                public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
-                    if (task.isSuccessful()) {
-                        PlaceBufferResponse places = task.getResult();
-                        mPlace = places.get(0);
-                        LatLng LatLngObj = mPlace.getLatLng();
-                        Log.i(TAG, "Place found: " + mPlace.getName());
-                        moveCamera(LatLngObj, DEFAULT_ZOOM, (String) mPlace.getName());
-                        places.release();
-                    } else {
-                        Log.e(TAG, "Place not found.");
-                    }
-                }
-            });
-
-
-        }
-    };
-
-
-
-    private void removeNotification(){
+    private void removeNotification() {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.cancel(004);
 
@@ -692,11 +663,51 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (recentsOpenFlag == true) {
+            removerecentsFragment();
 
-    public class DBinsertTask extends AsyncTask<Void,Void,Void>{
+        }
+    }
+
+    public void removerecentsFragment() {
+        getSupportFragmentManager().beginTransaction().remove(listFragment).commit();
+        getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (mDrawerLayout.isDrawerOpen(navigationView)) {
+            mDrawerLayout.closeDrawers();
+        } else if (recentsOpenFlag) {
+            super.onBackPressed();
+        } else if (alarmActive) {
+            moveTaskToBack(true);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void changeRadius() {
+        radius = Double.parseDouble(shapref.getString("radius_pref", ""));
+        circle.remove();
+        circleOptions = new CircleOptions()
+                .center(Dest_Loc)
+                .radius(radius)
+                .strokeWidth((float) 0.5)
+                .fillColor(Color.argb(50, 102, 255, 153))
+                .strokeColor(Color.argb(100, 0, 230, 77));
+        circle = mMap.addCircle(circleOptions);
+    }
+
+    public class DBinsertTask extends AsyncTask<Void, Void, Void> {
 
         boolean repeat_flag = false;
         String name;
+
         @Override
         protected Void doInBackground(Void... voids) {
             Log.d(TAG, "doInBackground: Task started");
@@ -707,7 +718,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 name = recents.getDname();
                 for (int i = 0; i < destnames.size(); i++) {
 
-                    if (name.equals(destnames.get(i))){
+                    if (name.equals(destnames.get(i))) {
                         repeat_flag = true;
                     }
                 }
@@ -728,23 +739,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         protected void onPostExecute(Void aVoid) {
             Log.d(TAG, "onPostExecute:  inside post execute");
 
-            if(repeat_flag == true){
-                Toast.makeText(getBaseContext(),"Alarm "+name+" already exists. Enter a different name",Toast.LENGTH_LONG ).show();
-                MapActivity.selectedDestination="";
-                RecentsListFragment.mflag=true;
+            if (repeat_flag == true) {
+                Toast.makeText(getBaseContext(), "Alarm " + name + " already exists. Enter a different name", Toast.LENGTH_LONG).show();
+                MapActivity.selectedDestination = "";
+                RecentsListFragment.mflag = true;
+            } else if (!recents.getDname().isEmpty()) {
+
+                OnplayClicked(new LatLng(0.0, 0.0));
+
             }
-            else if(!recents.getDname().isEmpty()) {
 
-                    OnplayClicked(new LatLng(0.0,0.0));
-
-                }
-
-                cancel_press=false;
+            cancel_press = false;
             return;
         }
     }
 
-    public class LoadDestns extends AsyncTask<Void,Void,Void>{
+    public class LoadDestns extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -752,51 +762,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             destnames = new ArrayList<String>(Arrays.asList(names));
             return null;
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(recentsOpenFlag==true){
-            removerecentsFragment();
-
-        }
-    }
-
-    public void removerecentsFragment(){
-        getSupportFragmentManager().beginTransaction().remove(listFragment).commit();
-        getSupportFragmentManager().popBackStack();
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        if(mDrawerLayout.isDrawerOpen(navigationView)){
-            mDrawerLayout.closeDrawers();
-        }
-
-        else if(recentsOpenFlag){
-           super.onBackPressed();
-        }
-        else if(alarmActive) {
-            moveTaskToBack(true);
-        }
-
-        else {
-            super.onBackPressed();
-        }
-    }
-
-    public void changeRadius(){
-        radius = Double.parseDouble(shapref.getString("radius_pref", ""));
-        circle.remove();
-        circleOptions = new CircleOptions()
-                .center(Dest_Loc)
-                .radius(radius)
-                .strokeWidth((float) 0.5)
-                .fillColor(Color.argb(50, 102, 255, 153))
-                .strokeColor(Color.argb(100, 0, 230, 77));
-        circle = mMap.addCircle(circleOptions);
     }
 
 

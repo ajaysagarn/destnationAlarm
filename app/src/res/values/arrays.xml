@@ -39,9 +39,9 @@
         <item>20000</item>
     </string-array>
     <string-array name="pref_sound_entries">
-    <item>neon</item>
-    <item>holo</item>
-    <item>xenon</item>
+        <item>neon</item>
+        <item>holo</item>
+        <item>xenon</item>
     </string-array>
     <string-array name="pref_sound_values">
         <item>neon</item>
